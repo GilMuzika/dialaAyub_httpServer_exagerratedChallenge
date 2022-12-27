@@ -1,5 +1,6 @@
 const http = require('http');
 const fs = require('fs');
+const getBooks = require('./showBooks/showBooks');
 
 //const host = 'localhost';
 const host = 'localhost';
@@ -19,11 +20,6 @@ function readfileasync(path_to_file) {
 }
 
 const server = http.createServer(async (request, response) => {
-
-	response.setHeader('Access-Control-Allow-Origin', '*');
-	response.setHeader('Access-Control-Request-Method', '*');
-	response.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET');
-	response.setHeader('Access-Control-Allow-Headers', '*');
 
     console.log(request.url);
     switch (request.url) {
@@ -70,6 +66,19 @@ const server = http.createServer(async (request, response) => {
         case "/timedate":
             try {
                 const data = await readfileasync(__dirname + '/timedate.html')
+                response.setHeader("Content-Type", "text/html");
+                response.writeHead(200);
+                response.end(data);
+                return;
+            }
+            catch (err) {
+                response.writeHead(500);
+                response.end(err);
+                return;
+            }
+        case "/books":
+             try {
+                const data = await getBooks.getBooks();
                 response.setHeader("Content-Type", "text/html");
                 response.writeHead(200);
                 response.end(data);
